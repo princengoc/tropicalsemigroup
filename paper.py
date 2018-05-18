@@ -98,21 +98,22 @@ if True:
   #collect statistics
   from multiprocessing import Pool
   pool = Pool()
-  ss = pool.map(randomLong3, xrange(15,21))
+  ss = pool.map(randomLong3, xrange(31,41))
   pool.close()
   pool.join()
   #reorganize asa dictionary
   statdict= {}
-  for na in xrange(15,21):
+  for na in xrange(31,41):
     statdict[na] = ss[na-15]
   #-- save for future reference. Note that the experiments are random 
   #so recomputed data may not be identical to the figures used the paper
-  filename = './output/random-ut3-rate-15to20.pk'
+  #filename = './output/random-ut3-rate-15to20.pk'
+  #filename = './output/random-ut3-rate-21to30.pk'
+  filename = './output/random-ut3-rate-31to40.pk'
   f = open(filename, 'wb')
   cPickle.dump(statdict,f)
   f.close()
  
-
 if False:
   """Generate data for Conjecture 5.6 (Figure 11). 
   Fraction of long ut2 adjacent identities which are also ut3 identities"""
@@ -171,7 +172,7 @@ if False:
         if util._reverseTest(w,w2):
           count2r += 1
     stats['nbin2r'] = count2r
-  return stats
+    return stats
   #analyze statistics for UT2 equivalence classes for n = 22
   n = 22
   metastats = {}
