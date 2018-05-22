@@ -80,6 +80,10 @@ def isAdjacent(w,w2):
     if w[i] != w2[i]:
       return w[i+1] != w2[i+1]  
 
+#-- convert binary words to string
+def stringToWord(w):
+  return ''.join(map(lambda x: 'a' if x == 1 else 'b', w))
+
 #---- ell1 distance
 def ell1(w,w2):
   """Returns the ell-1 distance between w and w2"""

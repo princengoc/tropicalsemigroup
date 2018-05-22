@@ -28,20 +28,21 @@ if False:
   """   
   #Generate the dictionary of all UT2 equivalence classes for W(na,nb), then save to a zipped pickle file.
   #file name format: dict(na)(nb).p
-  for na in range(4,12):
-    print "do ListAll in UT2 for na = " + str(na) + ", n = 21"
-    nb = 21-na
-    #compute the dictionary for (na,21)
-    identityDict = newtonHash.generateDict(na,nb)
-    #zip and save
-    filename = './output/dict'+str(na)+str(nb)+'.p'
-    save_zipped_pickle(identityDict,filename) 
-    #compute the dictionary for (na,22)
-    nb = 22-na
-    print "do ListAll in UT2 for na = " + str(na) + ", n = 22"
-    identityDict = newtonHash.generateDict(na,nb)
-    filename = './output/dict'+str(na)+str(nb)+'.p'
-    save_zipped_pickle(identityDict,filename)     
+  if False:
+    for na in range(4,12):
+      print "do ListAll in UT2 for na = " + str(na) + ", n = 21"
+      nb = 21-na
+      #compute the dictionary for (na,21)
+      identityDict = newtonHash.generateDict(na,nb)
+      #zip and save
+      filename = './output/dict'+str(na)+str(nb)+'.p'
+      save_zipped_pickle(identityDict,filename) 
+      #compute the dictionary for (na,22)
+      nb = 22-na
+      print "do ListAll in UT2 for na = " + str(na) + ", n = 22"
+      identityDict = newtonHash.generateDict(na,nb)
+      filename = './output/dict'+str(na)+str(nb)+'.p'
+      save_zipped_pickle(identityDict,filename)     
   #reload the dictionaries and hunt for UT3 identities amongst these UT2 identities
   #--- list all UT3 identities for n = 21 and n = 22
   #metadict21[na] = a dictionary of all UT3 identities for W(na,21-na)
@@ -49,10 +50,10 @@ if False:
   metadict21 = {}
   metadict22 = {}
   for na in xrange(11,3,-1):
-#    print "na = " + str(na) + ",n = 21"
-#    dictn = getDict(na,21,prefix='./output/dict')
-#    dickey = dictn.keys()
-#    metadict21[na] = newtonHash3.allUT3Hash(dictn,dickey,start=0)
+    print "na = " + str(na) + ",n = 21"
+    dictn = getDict(na,21,prefix='./output/dict')
+    dickey = dictn.keys()
+    metadict21[na] = newtonHash3.allUT3Hash(dictn,dickey,start=0)
     print "na = " + str(na) + ",n = 22"
     dictn = getDict(na,22,prefix='./output/dict')
     dickey = dictn.keys()
@@ -67,19 +68,52 @@ if False:
   filename = './output/metadict-ut3-22.pk'
   f = open(filename, 'wb')
   cPickle.dump(metadict22,f)
-  
-#  wlistdict = {}
-#  n = 21
-#  for na in range(4,11):
-#    print "find an UT3 identity for na = " + str(na) + ", n = " + str(n)
-#    dictn = getDict(na,n,prefix='./output/dict')
-#    dicval = dictn.values()
-#    wlistdict21[na] = huntHash(dicval,start=0)
-#  #print the list of UT3 identities 
-#  #all entries are (None,None), which means there are no UT3 identity for any na. 
-#  wlistdict.values()  
+  filename = './output/metadict-ut3-21.pk'
+  f = open(filename, 'wb')
+  cPickle.dump(metadict21,f)  
+  #print the identities for n = 22, na = 10
+  d10 = metadict22[10].values()
+  map(lambda x: map(stringToWord,x[0]),d10)
+  #print the identities for n = 22, na = 11
+  d11 = metadict22[11].values()
+  map(lambda x: len(x[0]), d11)
+  #each class has size 2. 
+  map(lambda x: map(stringToWord,x[0]),d11)
+  #merge class by flips and reversing the role of a's and b's. 
+  #for the case na = 10 it is easy to do by inspection that the two classes are equal up to a flip.
+  #for the other case, we recompute the keys up to reversals and flips. 
+  d = metadict22[11]
+  dflip = {}
+  dkeys = d.keys()
+  seen = set()
+  for i in xrange(len(dkeys)):
+    key = dkeys[i]
+    if key not in seen:      
+      seen.add(key)
+      w1,w2 = d[key][0]
+      f1 = np.flip(w1,0)
+      f1sig = newton3.getSignature(f1)
+      r1 = map(lambda x: 1 if x == 0 else 0, w1)
+      r1sig = newton3.getSignature(r1)
+      #need to flip the reverse as well
+      f2 = np.flip(r1,0)
+      f2sig = newton3.getSignature(f2)      
+      r2 = map(lambda x: 1 if x == 0 else 0, f2)
+      r2sig = newton3.getSignature(r2)
+      dflip[key] = [w1,w2]
+      if f1sig in d:
+        seen.add(f1sig)
+      if f2sig in d:
+        seen.add(f2sig)
+      if r1sig in d:
+        seen.add(r1sig)
+      if r2sig in d:
+        seen.add(r2sig)
+    #print out the words up to flip and reversals
+    map(lambda x: map(stringToWord,x),dflip.values())
+    len(dflip.values())
 
-if True:
+if False: #TODO
   """ Generate data for Figure 10, Example 5.4"""
   def randomLong3(na=30, ntrials = 50000):
     """Draw ntrials many words from W(na,na), and count 
@@ -98,13 +132,19 @@ if True:
   #collect statistics
   from multiprocessing import Pool
   pool = Pool()
+  #ss = pool.map(randomLong3, xrange(15,21))
+  #ss = pool.map(randomLong3, xrange(21,31))
   ss = pool.map(randomLong3, xrange(31,41))
   pool.close()
   pool.join()
   #reorganize asa dictionary
   statdict= {}
+#  for na in xrange(15,21):
+#    statdict[na] = ss[na-15]
+#  for na in xrange(21,31):
+#    statdict[na] = ss[na-21]
   for na in xrange(31,41):
-    statdict[na] = ss[na-15]
+    statdict[na] = ss[na-31]
   #-- save for future reference. Note that the experiments are random 
   #so recomputed data may not be identical to the figures used the paper
   #filename = './output/random-ut3-rate-15to20.pk'
@@ -112,9 +152,12 @@ if True:
   filename = './output/random-ut3-rate-31to40.pk'
   f = open(filename, 'wb')
   cPickle.dump(statdict,f)
-  f.close()
+  f.close() 
+  #load files
+  filename = './output/random-ut3-rate-31to40.pk'
+  stat3 = cPickle.load(open(filename,'r'))
  
-if False:
+if False: #TODO
   """Generate data for Conjecture 5.6 (Figure 11). 
   Fraction of long ut2 adjacent identities which are also ut3 identities"""
   metadict = {}

@@ -9,6 +9,7 @@ Examples and documentation guide for the UT2/UT3 package.
 
 """
 import newtonHash as newtonHash
+import newtonHash3 as newtonHash3
 import newton as newton
 import newton3 as newton3
 import numpy as np
@@ -33,6 +34,18 @@ if False:
     newton.plotPair(w,w2)
     #check that these are indeed UT3 identities
     print newton3.equal3(w,w2)
+
+if False:
+  """Example: convert a pair of words from 'ab' to '10'
+  """
+  w = map(lambda x: 1 if x == 'a' else 0, list('ababbabaababbabaababba'))
+  w2 = map(lambda x: 1 if x == 'a' else 0, list('ababbabaabbababaababba'))
+  newton.plotPair(w,w2)
+  newton.equal(w,w2)
+  print newton3.equal3(w,w2)
+  newton.equal(np.flip(w,0),np.flip(w2,0))
+  print newton3.equal3(np.flip(w,0),np.flip(w2,0))
+  
  
 if False:
   """Example: read in non-identities from a file and plot the words individually. 
@@ -97,4 +110,45 @@ if False:
   friendList = newton.returnFriendFast(w)
   print "number of UT2 neighbors = " + str(len(friendList)) + "\n"
   print "number of UT3 neighbors = " + str(sum([newton3.equal3fast(w,w2) for w2 in friendList]))
-    
+
+if False:
+  """Double-check Proposition 2.6 for the case of degree-2 signature. """
+  #w = map(int,list('1000101010101011100011111100')) 
+  w = map(lambda x: 1 if x == 'a' else 0, list('abbbabababababaaab'))
+  (Sa,path) = newton._S(w,a=1)
+  (Sb,path) = newton._S(w,a=0)
+  #Sab = _Sab(Sa,Sb,a=1)
+  (Sab,Sba) = newton3._getCrossSignature(w)
+  keepab = newton3._Sab(Sa,Sb,a=1)
+  keepba = newton3._Sab(Sb,Sa,a=0)
+  #do a transformation
+  pi = [1,0,0,0,0,1,0,0,1,0,1,0,0,1,0,1]
+  pi = np.reshape(pi,(4,4))
+  Sab = np.matrix(Sab)
+  Sba = np.matrix(Sba)
+  #comment: getCrossSignature counts the intermediate letter, so does not need to add (0,0,1,0)
+  pix = np.dot(pi,Sab.T).T + np.matrix((0,0,1,0))
+  piy = np.dot(pi,Sba.T).T + np.matrix((0,0,1,0))
+  print np.all(pix == keepab)
+  print np.all(piy == keepba)  
+
+if False:
+  """Find an instance to produce Figure 9, Example 5.4"""
+  na = 15
+  nb = 15
+  w = [1]*na + [0]*nb
+  np.random.shuffle(w)
+  #compute the equivalence class with a recursion
+  gid.clear()
+  gid.addToGlobeList(set([tuple(w)]))  
+  gid.idloop(w)
+  #list out all words equivalent to w
+  globeList = list(gid.getGlobeList())
+  print len(globeList)
+  #go through globeList: compute ut3 signatures
+  d2 = {}
+  d2[newton.getSignature(w)] = globeList
+  d3 = newtonHash3.allUT3Hash(d2,d2.keys())
+  print len(d3)
+  map(lambda x: len(x[0]), d3.values())
+  

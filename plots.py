@@ -118,20 +118,20 @@ if False:
   newton.plotPair(w,w2,title ='')
   plt.savefig('figures/fibonacci.pdf')  
   
-
   
 if False:
   """Figure 9, Example 5.4. 
   Plot a particular UT3 equivalence class of size 3, where the swap order matters.
   """
-  w0 = map(int,list('1000111010011010101000101110'))
-  w2 = map(int,list('1000111010010110101000101110'))
-  w3 = map(int,list('1000111010010101101000101110'))
-  w4 = map(int,list('1000111010011001101000101110'))
+  w0 = map(int,list('000111111010011001100110100010'))
+  w2 = map(int,list('000111111010011010010110100010'))
+  w3 = map(int,list('000111111010011010100110100010'))
+  w4 = map(int,list('000111111010011001010110100010'))
   wtext = ''.join(map(str,w0))
-  #plot the min-max elements, which are in fact equal
-  newton.plotPair(w0,w3)
-  plt.savefig('../figures/fib'+wtext+'-minmax.pdf')
+  #have: w0~w2~w3 in UT3, and they are NOT equal to w4
+  #plot the min-max elements, which are NOT equal
+  newton.plotPair(w3,w4)
+  plt.savefig('./figures/fib-ut3.pdf')
   #-- plot pairs: w vs w2,w3,w4, without labels
   #and without the P,Q polygons
   wtext = ''.join(map(str,w0))

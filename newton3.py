@@ -26,24 +26,43 @@ def _Saa(S):
 
 def _Sab(Sa,Sb,a=1):
   """Input: Sa,Sb from newton._S -- see _newton3 for example usage.
-  Output: the list of points for Sab in \R^4."""
-  #just create the actual polytope manually instead of doing complicated projections
-  #note: by default, Sa has first coordinate increasing,
-  #while Sb has the second coordinate increasing. 
-  #so if a == 0, need to switch the two columns of Sa and Sb
+  Output: the list of points for Sab in \R^4.
+  This version uses the transformation of Proposition 2.6
+  """    
   if a == 0:
     Sa = np.flip(Sa,1)
-    Sb = np.flip(Sb,1)
-  na = len(Sa)
-  nb = len(Sb)
-  points = map(lambda x: np.concatenate((Sa[0],x)), Sb) 
-  for i in xrange(1,na):
-    if i < nb: #in case the word ends with a long string of a's. 
-      Sbprime = Sb[i:,:] - np.array([Sb[i-1,0],i])
-      for j in range(len(Sbprime)):
-        points += [np.concatenate((Sa[i], Sbprime[j]))]
-  return points
+    Sb = np.flip(Sb,1) 
+  #take combinations, then remove irrelevant points
+  genPair = itt.product(Sa,Sb)
+  points = map(np.concatenate,genPair)
+  keep = [x for x in points if (x[0] < x[2]) & (x[1] <= x[3])]
+  return keep
 
+#--- compute from definition: quadratic in word length
+def _getCrossSignature(w):
+  """Input: word w. Output: points in \gamma_{ab},\gamma_{ba}
+  This function uses a raw computation from definition (content between indices)
+  """
+  w = np.array(w)
+  n = len(w)
+  idxpair = itt.combinations(xrange(n),2)
+  gamab = []
+  gamba = []
+  for rs in idxpair:
+    r,s = rs
+    if w[r] == 1 and w[s] == 0:
+      br = sum(1-w[:r])
+      ar = sum(w[:r])
+      bs = sum(1-w[:s])
+      ass = sum(w[:s])
+      gamab += [(ar,br,ass-ar-1,bs-br)]
+    if w[r] == 0 and w[s] == 1:
+      br = sum(1-w[:r])
+      ar = sum(w[:r])
+      bs = sum(1-w[:s])
+      ass = sum(w[:s])
+      gamba += [(br,ar,bs-br-1,ass-ar)]      
+  return (map(np.array,gamab),map(np.array,gamba))
     
 #--- create function for testing equality
 def _equal3(S,T):
