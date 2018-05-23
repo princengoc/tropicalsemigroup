@@ -113,7 +113,7 @@ if False:
     map(lambda x: map(stringToWord,x),dflip.values())
     len(dflip.values())
 
-if False: #TODO
+if False: 
   """ Generate data for Figure 10, Example 5.4"""
   def randomLong3(na=30, ntrials = 50000):
     """Draw ntrials many words from W(na,na), and count 
@@ -132,29 +132,21 @@ if False: #TODO
   #collect statistics
   from multiprocessing import Pool
   pool = Pool()
-  #ss = pool.map(randomLong3, xrange(15,21))
-  #ss = pool.map(randomLong3, xrange(21,31))
-  ss = pool.map(randomLong3, xrange(31,41))
+  ss = pool.map(randomLong3, xrange(15,41))
   pool.close()
   pool.join()
   #reorganize asa dictionary
   statdict= {}
-#  for na in xrange(15,21):
-#    statdict[na] = ss[na-15]
-#  for na in xrange(21,31):
-#    statdict[na] = ss[na-21]
-  for na in xrange(31,41):
-    statdict[na] = ss[na-31]
+  for na in xrange(15,41):
+    statdict[na] = ss[na-15]
   #-- save for future reference. Note that the experiments are random 
   #so recomputed data may not be identical to the figures used the paper
-  #filename = './output/random-ut3-rate-15to20.pk'
-  #filename = './output/random-ut3-rate-21to30.pk'
-  filename = './output/random-ut3-rate-31to40.pk'
+  filename = './output/random-ut3-rate-15to40.pk'
   f = open(filename, 'wb')
   cPickle.dump(statdict,f)
   f.close() 
   #load files
-  filename = './output/random-ut3-rate-31to40.pk'
+  filename = './output/random-ut3-rate-15to40.pk'
   stat3 = cPickle.load(open(filename,'r'))
  
 if False: #TODO
