@@ -12,7 +12,7 @@ File descriptions:
 Folders
 * input/: contains files to be used in conjuction with example.py and 
 * output/: contains output files produced by codes in paper.py
-* figures/: contains figures produced by the codes
+* figures/: contains figures produced by the codes. Other figures in the paper are produced by R codes based on the data in output/
 
 
 
