@@ -149,39 +149,48 @@ if False:
   filename = './output/random-ut3-rate-15to40.pk'
   stat3 = cPickle.load(open(filename,'r'))
  
-if False: #TODO
+if False: 
   """Generate data for Conjecture 5.6 (Figure 11). 
   Fraction of long ut2 adjacent identities which are also ut3 identities"""
-  metadict = {}
-  for ell in xrange(100, 700, 100):
-    print "ell = " + str(ell)
-    w = [1]*ell + [0]*ell
+  def ut3fraction(ell):
     repeat = 100
     count2 = []
     count3 = []
+    w = [1]*ell + [0]*ell
     while repeat > 0:
       #progress counter
       if repeat % 10 == 0:
-        print "iter = " + str(repeat)
+        print "iter = " + str(repeat) + "ell = " + str(ell)
       np.random.shuffle(w)
       wlist = newton.returnFriendFast(w)
       count2 += [len(wlist)]
       wlist3 = map(lambda v: newton3.equal3fast(w,v),wlist)
       count3 += [sum(wlist3)]
       repeat -= 1
-    metadict[ell] = (count2,count3)
+    return (count2,count3)
+  
+  #collect statistics
+  from multiprocessing import Pool
+  pool = Pool()  
+  metadict = {}
+  ss = pool.map(ut3fraction, xrange(100,700,100))
+  pool.close()
+  pool.join()
+  
+  for i in xrange(1,7):
+    metadict[ell*100] = ss[i-1]
   #save data
   filename = './output/longut3-partial.pk'
   f = open(filename, 'wb')
   cPickle.dump(metadict,f)  
   #reload, generate data for plotting
-  filename = '../output/longut3-partial.pk'
+  filename = './output/longut3-partial.pk'
   f = open(filename, 'r')
   metadict = cPickle.load(f)    
   for i in metadict.keys():
     (count2,count3) = metadict[i]
     data = 1.0*np.array(count3)/np.array(count2)
-    f = open("../output/longut3-"+str(i)+'.txt','wb')
+    f = open("./output/longut3-"+str(i)+'.txt','wb')
     np.savetxt(f,data,fmt='%.10f')  
     f.close()  
   
