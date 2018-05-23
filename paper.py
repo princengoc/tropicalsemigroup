@@ -151,21 +151,24 @@ if False:
  
 if False: 
   """Generate data for Conjecture 5.6 (Figure 11). 
-  Fraction of long ut2 adjacent identities which are also ut3 identities"""
+  Fraction of long ut2 adjacent identities which are also ut3 identities. 
+  Shorter version: repeat 50 times. """
   def ut3fraction(ell):
-    repeat = 100
+    repeat = 50
     count2 = []
     count3 = []
     w = [1]*ell + [0]*ell
     while repeat > 0:
       #progress counter
-      if repeat % 10 == 0:
-        print "iter = " + str(repeat) + "ell = " + str(ell)
+      print "iter = " + str(repeat) + "ell = " + str(ell)
       np.random.shuffle(w)
+      sigw = newton3.getSignature(w)
       wlist = newton.returnFriendFast(w)
       count2 += [len(wlist)]
-      wlist3 = map(lambda v: newton3.equal3fast(w,v),wlist)
-      count3 += [sum(wlist3)]
+      signature = map(lambda v: newton3.getSignature(v) == sigw, wlist)
+      count3 += [sum(np.array(signature))]
+#      wlist3 = map(lambda v: newton3.equal3fast(w,v),wlist)
+#      count3 += [sum(wlist3)]
       repeat -= 1
     return (count2,count3)
   
