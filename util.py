@@ -11,6 +11,7 @@ Utility functions.
 import numpy as np
 import gzip
 import cPickle as cPickle
+import itertools as itt
 
 #--- input/output functions
 def _getWord(line):
@@ -83,6 +84,29 @@ def isAdjacent(w,w2):
 #-- convert binary words to string
 def stringToWord(w):
   return ''.join(map(lambda x: 'a' if x == 1 else 'b', w))
+
+#-- find the fourth word to completes the diamond
+#this function is used exclusively to confirm the weaker version of the Structural Theorem 
+  
+def diamond(wlist):
+  for uv in itt.combinations(wlist,2):
+    w1,w2 = uv
+    if ell1(w1,w2) == 4:
+      idx = [i for i in xrange(len(wlist[0])) if w1[i] != w2[i]]
+      break
+  #list all possible combinations
+  def wsub(subseq):
+    w1 = list(wlist[0])
+    for i in range(4):
+      w1[idx[i]] = subseq[i]
+    return w1
+  w1 = wsub([1,0,1,0])
+  w2 = wsub([1,0,0,1])
+  w3 = wsub([0,1,1,0])
+  w4 = wsub([0,1,0,1])
+  return [w1,w2,w3,w4]
+  
+    
 
 #---- ell1 distance
 def ell1(w,w2):

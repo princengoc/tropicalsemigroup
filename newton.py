@@ -205,10 +205,10 @@ def returnFriend(w):
 
 def _idloop(w,knownList):
   """
-  Internal function for _idloop. 
+  Internal function for idloop in the module globalid
   Returns a list of w' which are one swap away from w, and which are NOT in knownList.
   Returns: newList.
-  idloop is implemented with a global variable in analyze.py
+  idloop is implemented with a global variable in globalid.py
   Note: knownList is a SET"""
   newList = []
   wshift = w[1:]
@@ -221,6 +221,23 @@ def _idloop(w,knownList):
       if equal(w,w2) and tuple(w2) not in knownList:
         newList += [tuple(w2)]
   return newList
+
+def _idloopFast(w,wmin,wmax,knownList):
+  """Same as _idloop but use the min/max pair of w and thus faster"""
+  newList = []
+  wshift = w[1:]
+  wright = w[:-1]
+  for i in range(len(wshift)):
+    if wshift[i] != wright[i]:
+      w2 = np.array(w)
+      w2[i] = w[i+1]
+      w2[i+1] = w[i]
+      if tuple(w2) not in knownList:
+        inclass = (isLess(wmin,w2) == 1) and (isLess(w2,wmax) == 1)
+        if inclass:
+          newList += [tuple(w2)]
+  return newList  
+
 
 def _getMinMaxPair(wList):
   """Input: wList = list of all elements in a UT2 equivalence class.

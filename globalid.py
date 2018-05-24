@@ -29,5 +29,13 @@ def idloop(w):
   for w2 in newList:
     idloop(w2)
 
+def idloopFast(w,wmin,wmax):
+  """Same as idloop, but uses the min/max elements and
+  do a search using word comparison instead of signature comparison"""
+  newList = newton._idloopFast(w,wmin,wmax,globeList)
+  addToGlobeList(newList)
+  for w2 in newList:
+    idloopFast(w2,wmin,wmax)  
+
 def getGlobeList():
   return globeList

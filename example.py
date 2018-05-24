@@ -17,6 +17,7 @@ from util import *
 import globalid as gid
 import cPickle as cPickle
 import matplotlib.pyplot as plt
+import itertools as itt
 
 if False:
   """Example: plot the polygons of a single word"""
@@ -132,23 +133,39 @@ if False:
   print np.all(pix == keepab)
   print np.all(piy == keepba)  
 
+  
+
 if False:
   """Find an instance to produce Figure 9, Example 5.4"""
-  na = 15
-  nb = 15
+  #get a random word. Compute up to recursion depth 2 only, to get a smallest counter example possible
+  na = 22
+  nb = 22
   w = [1]*na + [0]*nb
-  np.random.shuffle(w)
-  #compute the equivalence class with a recursion
-  gid.clear()
-  gid.addToGlobeList(set([tuple(w)]))  
-  gid.idloop(w)
-  #list out all words equivalent to w
-  globeList = list(gid.getGlobeList())
-  print len(globeList)
-  #go through globeList: compute ut3 signatures
-  d2 = {}
-  d2[newton.getSignature(w)] = globeList
-  d3 = newtonHash3.allUT3Hash(d2,d2.keys())
-  print len(d3)
-  map(lambda x: len(x[0]), d3.values())
-  
+  found = False
+  while not found:
+    np.random.shuffle(w)
+    #compute the equivalence class with a recursion depth 2 only
+    wmin,wmax = newton.getMinMax(w)
+    globeList = set([tuple(w)])
+    neighbors = newton._idloopFast(w,wmin,wmax,globeList)
+    globeList = globeList.union(set(neighbors))
+    print len(globeList)
+    #go through globeList: compute ut3 signatures
+    d2 = {}
+    d2[newton.getSignature(w)] = globeList
+    d3 = newtonHash3.allUT3Hash(d2,d2.keys())
+    biglist = [x[0] for x in d3.values() if len(x[0]) > 2]
+    for wlist in biglist:
+      wlist = biglist[0]
+      degree = len(wlist)      
+      if degree == 3:
+        wlist = diamond(wlist)
+        if not np.all(map(lambda w: newton3.equal3(w,wlist[0]), wlist)):
+          print "found counter example"
+          found = True
+          break
+
+  map(lambda w: newton3.equal3(w,wlist[0]), wlist)
+  wmin,wmax = newton.getMinMax(wlist[0])
+  newton.plotPair(wmin,wmax)
+  plt.savefig('./figures/fib-minmax.pdf')
