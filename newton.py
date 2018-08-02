@@ -72,13 +72,37 @@ def _plotHull(P,points,na,nb,linecol='k-'):
   plt.yticks(np.arange(0, nb+1, 1))  
   
 
-def plotWord(w):
+def plotWord(w,a=None):
   na = sum(np.array(w))
   nb = len(w) - na
   (P,S) = newton(w,1)
   (Q,T) = newton(w,0)
-  _plotHull(P,S,na,nb,linecol='b--')
-  _plotHull(Q,T,na,nb,linecol='r--')
+  if(a is None):
+    _plotHull(P,S,na,nb,linecol='b--')
+    _plotHull(Q,T,na,nb,linecol='r--')
+  else:
+    if(a == 1):
+      _plotHull(P,S,na,nb,linecol='b--')
+    else:
+      _plotHull(Q,T,na,nb,linecol='r--')  
+
+def plotPath(w,a=None):
+  """Plot the path only. Mark points if a is not None"""
+  na = sum(np.array(w))
+  nb = len(w) - na  
+  (P,S,path1) = newton(w,1,True)
+  fig, ax = plt.subplots()
+  ax.set_color_cycle(['black','red','blue','green'])
+  plt.plot(path1[:,0], path1[:,1])
+  plt.grid(b=True, which='major', axis='both')
+  plt.xticks(np.arange(0, na+1, 1))
+  plt.yticks(np.arange(0, nb+1, 1))  
+  if a == 1:
+    plt.plot(S[:,0],S[:,1],'o')
+  if a == 0:
+    (Q,T) = newton(w,0)
+    plt.plot(T[:,0],T[:,1],'o')
+
 
 def plotPair(w,w2,title=""):
   """Plot an identity with the two paths"""

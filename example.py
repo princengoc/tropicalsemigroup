@@ -19,12 +19,35 @@ import cPickle as cPickle
 import matplotlib.pyplot as plt
 import itertools as itt
 
+
+
 if False:
   """Example: plot the polygons of a single word"""
   w = map(int,list('100010101010101110')) 
   #plot this word against itself
   newton.plotPair(w,w,title =''.join(map(str,w)))
-
+  #--- another word, just with the path and either A or B polygons but not both
+  w = map(lambda x: 1 if x == 'a' else 0, list('abbababaab'))
+  newton.plotPath(w)
+  plt.savefig('./talks/figures/adjan1.pdf')
+  newton.plotPath(w,a=1)
+  plt.savefig('./talks/figures/adjan2.pdf')
+  newton.plotPath(w,a=1)
+  newton.plotWord(w,a=1)
+  plt.savefig('./talks/figures/adjan3.pdf')
+  newton.plotPath(w,a=0)
+  plt.savefig('./talks/figures/adjan4.pdf')
+  newton.plotPath(w,a=0)
+  newton.plotWord(w,a=0)
+  plt.savefig('./talks/figures/adjan5.pdf')
+  w = map(lambda x: 1 if x == 'a' else 0, list('abbaabbaab'))
+  newton.plotPath(w,a=1)
+  newton.plotWord(w,a=1)
+  plt.savefig('./talks/figures/adjan3-v.pdf')  
+  newton.plotPath(w,a=0)
+  newton.plotWord(w,a=0)
+  plt.savefig('./talks/figures/adjan5-v.pdf')    
+  
 if False:
   """Example: read in identities from a file and plot them"""
   filename = './input/input3.txt'  

@@ -134,8 +134,15 @@ if False:
   #-- double-check
   map(lambda w: newton3.equal3(w,w0), [w0,w2,w3,w4])
 
-  
-
-
+if False:
+  """Word pairs for the figure in proof of Aidan's theorem"""  
+  v = map(lambda x: 0 if x == 'b' else 1, list('abbabbbbaa'))
+  u = map(lambda x: 0 if x == 'b' else 1, list('abbbabbbaa'))
+  newton.plotCustomPair(u,v)
+  plt.savefig('./figures/nonequiv-1.pdf')
+  v = map(lambda x: 0 if x == 'b' else 1, list('abababbbba'))
+  u = map(lambda x: 0 if x == 'b' else 1, list('abbaabbbba'))
+  newton.plotCustomPair(u,v)
+  plt.savefig('./figures/nonequiv-2.pdf')
 
 
